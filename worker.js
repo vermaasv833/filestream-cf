@@ -133,13 +133,8 @@ async function handleWebhook(event) {
 }
 
 async function registerWebhook(event, requestUrl, suffix, secret) {
-  const webhookUrl = ${requestUrl.protocol}//${requestUrl.hostname}${suffix}
+  const webhookUrl = `${requestUrl.protocol}//${requestUrl.hostname}${suffix}`;
   const response = await fetch(apiUrl('setWebhook', { url: webhookUrl, secret_token: secret }))
-  return new Response(JSON.stringify(await response.json()), {headers: HEADERS_ERRR})
-}
-
-async function unregisterWebhook(event) {
-  const response = await fetch(apiUrl('setWebhook', { url: '' }))
   return new Response(JSON.stringify(await response.json()), {headers: HEADERS_ERRR})
 }
 
