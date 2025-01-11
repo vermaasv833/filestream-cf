@@ -1,4 +1,4 @@
-// ---------- Insert Your Data ---------- //
+1// ---------- Insert Your Data ---------- //
 
 const BOT_TOKEN = "8166257595:AAGF_SIVXRmXTWeLo88H9f8bIT3HkS_cdlY"; // Insert your bot token.
 const BOT_WEBHOOK = "/endpoint"; // Let it be as it is.
@@ -191,7 +191,7 @@ async function getFile(file_id) {
 }
 
 async function fetchFile(file_path) {
-    const file = await fetch(https://api.telegram.org/file/bot${BOT_TOKEN}/${file_path});
+    const file = await fetch(`https://api.telegram.org/file/bot${BOT_TOKEN}/${file_path}`);
     return await file.arrayBuffer()
 }
 
