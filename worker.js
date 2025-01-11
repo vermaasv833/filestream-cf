@@ -377,18 +377,17 @@ async function onMessage(event, message) {
     return sendMessage(message.chat.id, message.message_id, "Send me any file/video/gif/audio *(t<=4GB, e<=20MB)*.", buttons)
   }
 
-  if (fSave.error_code) {return sendMessage(message.chat.id, message.message_id, fSave.description)}
+    if (fSave.error_code) {return sendMessage(message.chat.id, message.message_id, fSave.description)}
 
   const final_hash = (btoa(fSave.chat.id*-SIA_NUMBER + "/" + fSave.message_id*SIA_NUMBER)).replace(/=/g, "")
-  const final_link = ${url.origin}/?file=${final_hash}
-  const final_stre = ${url.origin}/?file=${final_hash}&mode=inline
-  const final_tele = https://t.me/${bot.username}/?start=${final_hash}
+  const final_link = `${url.origin}/?file=${final_hash}`;
+  const final_stre = `${url.origin}/?file=${final_hash}&mode=inline`;
+  const final_tele = `https://t.me/${bot.username}/?start=${final_hash}`;
 
   const buttons = [
     [{ text: "Telegram Link", url: final_tele }, { text: "Inline Link", switch_inline_query_current_chat: final_hash }],
     [{ text: "Stream Link", url: final_stre }, { text: "Download Link", url: final_link }]
   ];
 
-  let final_text = *🗂 File Name:* \${fName}\\n*⚙️ File Hash:* \${final_hash}\``
+  let final_text = `*🗂 File Name:* \`${fName}\`\\n*⚙️ File Hash:* \`${final_hash}\``
   return sendMessage(message.chat.id, message.message_id, final_text, buttons)
-}
