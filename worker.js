@@ -264,62 +264,20 @@ async function onInline(event, inline) {
   return await answerInlineDocument(inline.id, fName, fID, fType, buttons)
 }
 
-// ---------- Message Listener ---------- //
+// ---------- Message Listener ---------- // 
 
 async function onMessage(event, message) {
   let fID; let fName; let fSave; let fType;
   let url = new URL(event.request.url);
   let bot = await getMe()
 
-    if (message.via_bot && message.via_bot.username == (await getMe()).username) {
-        return
-    }
+  if (message.via_bot && message.via_bot.username == (await getMe()).username) {
+    return
+  }
 
-    if (message.chat.id.toString().includes("-100")) {
-        return
-    }
-    if (message.text === "/ping") {
-       const startTime = Date.now();
-       await sendMessage(message.chat.id, message.message_id, "Pinging...");
-       const endTime = Date.now();
-       const ping = endTime - startTime;
-    
-    const ping_text = `🤖 Bot Name: ${BOT_NAME}\n✅ Bot Status: Running\n📶 Ping: ${ping} ms`
-
-      return sendMessage(message.chat.id, message.message_id, ping_text)
-    }
-
-    if (message.text === "/info") {
-      const user = message.from;
-      const restrictions = user.is_bot
-    ? null
-    : await fetch(this.apiUrl('getChatMember', {
-            chat_id: message.chat.id,
-            user_id: user.id
-          })).then(response => response.json()).then(data => data.result.is_member == true )
-      const isScam = user.is_bot
-    ? null
-    : await fetch(this.apiUrl('getChatMember', {
-            chat_id: message.chat.id,
-            user_id: user.id
-          })).then(response => response.json()).then(data => data.result.status == "restricted" && data.result.is_member == true )
-
-         const premium = user.is_premium === true ? "True" : "False"
-         
-         const info_text = `🔍 Your Info on \n━━━━━━━━━━━━━━\n👤 First Name: ${user.first_name || "N/A"} ${user.last_name || ""}\n🆔 ID: ${user.id}\n📛 Username: @${user.username || "N/A"}\n🔗 Profile Link: t.me/${user.username || user.id}\n🔒 TG Restrictions: ${restrictions == true ? "True" : "False" }\n🚨 TG Scamtag: ${isScam == true ? "True" : "False" }\n🌟 TG Premium: ${premium}`
-      return sendMessage(message.chat.id, message.message_id, info_text)
-    }
-
-
-  if (message.text === "/about") {
-  
-     const about_text = `╔════❰ about ❱═❍\n║╭━━━━━━━━━━━━━━━➣\n║┣⪼🤖ᴍʏ ɴᴀᴍᴇ  : ${BOT_NAME}\n║┣⪼👦ᴅᴇᴠᴇʟᴏᴘᴇʀ: ${DEVELOPER}\n║┣⪼❣️ᴜᴘᴅᴀᴛᴇ   : ${UPDATED}\n║┣⪼🗣️ʟᴀɴɢᴜᴀɢᴇ : JS 💻\n║┣⪼🧠ʜᴏsᴛᴇᴅ   : ᴄʟᴏᴜᴅғʟᴀʀᴇ⚡\n║┣⪼📚ᴜᴘᴅᴀᴛᴇᴅ  : ${UPDATED}\n║┣⪼🗒️ᴠᴇʀsɪᴏɴ  : v${VERSION}\n║╰━━━━━━━━━━━━━━━➣\n╚══════════════════❍`
-
-        const buttons = [[{text: "Channel", url: BOT_CHANNEL_LINK}]]
-      return sendMessage(message.chat.id, message.message_id, about_text, buttons)
-    }
-
-
+  if (message.chat.id.toString().includes("-100")) {
+    return
+  }
 
   if (message.text && message.text.startsWith("/start ")) {
     const file = message.text.split("/start ")[1]
@@ -346,6 +304,16 @@ async function onMessage(event, message) {
       return sendMessage(message.chat.id, message.message_id, "Bad Request: File not found")
     }
   }
+
+  if (message.text === '/info') {
+        return await sendInfo(message);
+  }
+    if (message.text === '/about') {
+        return await sendAbout(message);
+    }
+     if (message.text === '/ping') {
+        return await sendPing(message);
+    }
 
   if (!PUBLIC_BOT && message.chat.id != BOT_OWNER) {
     const buttons = [[{ text: "Source Code", url: "https://github.com/vauth/filestream-cf" }]];
@@ -377,7 +345,7 @@ async function onMessage(event, message) {
     return sendMessage(message.chat.id, message.message_id, "Send me any file/video/gif/audio *(t<=4GB, e<=20MB)*.", buttons)
   }
 
-    if (fSave.error_code) {return sendMessage(message.chat.id, message.message_id, fSave.description)}
+  if (fSave.error_code) {return sendMessage(message.chat.id, message.message_id, fSave.description)}
 
   const final_hash = (btoa(fSave.chat.id*-SIA_NUMBER + "/" + fSave.message_id*SIA_NUMBER)).replace(/=/g, "")
   const final_link = `${url.origin}/?file=${final_hash}`;
@@ -391,3 +359,4 @@ async function onMessage(event, message) {
 
   let final_text = `*🗂 File Name:* \`${fName}\`\\n*⚙️ File Hash:* \`${final_hash}\``
   return sendMessage(message.chat.id, message.message_id, final_text, buttons)
+        }
