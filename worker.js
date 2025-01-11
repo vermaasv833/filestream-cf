@@ -7,8 +7,13 @@ const BOT_OWNER = 7825674005; // Insert your telegram account id.
 const BOT_CHANNEL = -1002313368299; // Insert your telegram channel id which the bot is admin in.
 const SIA_NUMBER = 12345; // Insert a random integer number and keep it safe.
 const PUBLIC_BOT = false; // Make your bot public (only [true, false] are allowed).
+const BOT_NAME = "YourBotName" // Add bot name
+const DEVELOPER = "Your Name" //Add bot developer
+const UPDATED = "Never" // Bot Update Date
+const VERSION = "1.0.0" // Bot Version
+const BOT_CHANNEL_LINK = "https://t.me/your_channel_username"
 
-// ---------- Do Not Modify ---------- // 
+// ---------- Do Not Modify ---------- //
 
 const WHITE_METHODS = ["GET", "POST", "HEAD"];
 const HEADERS_FILE = {"Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "GET, HEAD, POST, OPTIONS", "Access-Control-Allow-Headers": "Content-Type"};
@@ -19,7 +24,7 @@ const ERROR_406 = {"ok":false,"error_code":406,"description":"Bad Request: file 
 const ERROR_407 = {"ok":false,"error_code":407,"description":"Bad Request: file hash invalid by atob"};
 const ERROR_408 = {"ok":false,"error_code":408,"description":"Bad Request: mode not in [attachment, inline]"};
 
-// ---------- Event Listener ---------- // 
+// ---------- Event Listener ---------- //
 
 addEventListener('fetch', event => {
     event.respondWith(handleRequest(event))
@@ -29,7 +34,7 @@ async function handleRequest(event) {
     const url = new URL(event.request.url);
     const file = url.searchParams.get('file');
     const mode = url.searchParams.get('mode') || "attachment";
-     
+
     if (url.pathname === BOT_WEBHOOK) {return handleWebhook(event)}
     if (url.pathname === '/registerWebhook') {return registerWebhook(event, url, BOT_WEBHOOK, BOT_SECRET)}
     if (url.pathname === '/unregisterWebhook') {return unregisterWebhook(event)}
@@ -53,7 +58,7 @@ async function handleRequest(event) {
 
     return new Response(rdata, {
         status: 200, headers: {
-            "Content-Disposition": `${mode}; filename=${rname}`, // inline;
+            "Content-Disposition": ${mode}; filename=${rname}, // inline;
             "Content-Length": rsize,
             "Content-Type": rtype,
             ...HEADERS_FILE
@@ -67,7 +72,7 @@ async function RetrieveFile(channel_id, message_id) {
     let  fID; let fName; let fType; let fSize; let fLen;
     let data = await editMessage(channel_id, message_id, await UUID());
     if (data.error_code){return data}
-    
+
     if (data.document){
         fLen = data.document.length - 1
         fID = data.document.file_id;
@@ -117,7 +122,7 @@ async function UUID() {
     });
 }
 
-// ---------- Telegram Webhook ---------- // 
+// ---------- Telegram Webhook ---------- //
 async function handleWebhook(event) {
   if (event.request.headers.get('X-Telegram-Bot-Api-Secret-Token') !== BOT_SECRET) {
     return new Response('Unauthorized', { status: 403 })
@@ -128,12 +133,12 @@ async function handleWebhook(event) {
 }
 
 async function registerWebhook(event, requestUrl, suffix, secret) {
-  const webhookUrl = `${requestUrl.protocol}//${requestUrl.hostname}${suffix}`
+  const webhookUrl = ${requestUrl.protocol}//${requestUrl.hostname}${suffix}
   const response = await fetch(apiUrl('setWebhook', { url: webhookUrl, secret_token: secret }))
   return new Response(JSON.stringify(await response.json()), {headers: HEADERS_ERRR})
 }
 
-async function unregisterWebhook(event) { 
+async function unregisterWebhook(event) {
   const response = await fetch(apiUrl('setWebhook', { url: '' }))
   return new Response(JSON.stringify(await response.json()), {headers: HEADERS_ERRR})
 }
@@ -191,24 +196,24 @@ async function getFile(file_id) {
 }
 
 async function fetchFile(file_path) {
-    const file = await fetch(`https://api.telegram.org/file/bot${BOT_TOKEN}/${file_path}`);
+    const file = await fetch(https://api.telegram.org/file/bot${BOT_TOKEN}/${file_path});
     return await file.arrayBuffer()
 }
 
 function apiUrl (methodName, params = null) {
     let query = ''
     if (params) {query = '?' + new URLSearchParams(params).toString()}
-    return `https://api.telegram.org/bot${BOT_TOKEN}/${methodName}${query}`
+    return https://api.telegram.org/bot${BOT_TOKEN}/${methodName}${query}
 }
 
-// ---------- Update Listener ---------- // 
+// ---------- Update Listener ---------- //
 
 async function onUpdate(event, update) {
   if (update.inline_query) {await onInline(event, update.inline_query)}
   if ('message' in update) {await onMessage(event, update.message)}
 }
 
-// ---------- Inline Listener ---------- // 
+// ---------- Inline Listener ---------- //
 
 async function onInline(event, inline) {
   let  fID; let fName; let fType; let fSize; let fLen;
@@ -217,7 +222,7 @@ async function onInline(event, inline) {
     const buttons = [[{ text: "Source Code", url: "https://github.com/vauth/filestream-cf" }]];
     return await answerInlineArticle(inline.id, "Access forbidden", "Deploy your own filestream-cf.", "*❌ Access forbidden.*\n📡 Deploy your own [filestream-cf](https://github.com/vauth/filestream-cf) bot.", buttons)
   }
- 
+
   try {atob(inline.query)} catch {
     const buttons = [[{ text: "Source Code", url: "https://github.com/vauth/filestream-cf" }]];
     return await answerInlineArticle(inline.id, "Error", ERROR_407.description, ERROR_407.description, buttons)
@@ -265,20 +270,62 @@ async function onInline(event, inline) {
   return await answerInlineDocument(inline.id, fName, fID, fType, buttons)
 }
 
-// ---------- Message Listener ---------- // 
+// ---------- Message Listener ---------- //
 
 async function onMessage(event, message) {
   let fID; let fName; let fSave; let fType;
   let url = new URL(event.request.url);
   let bot = await getMe()
 
-  if (message.via_bot && message.via_bot.username == (await getMe()).username) {
-    return
-  }
+    if (message.via_bot && message.via_bot.username == (await getMe()).username) {
+        return
+    }
 
-  if (message.chat.id.toString().includes("-100")) {
-    return
-  }
+    if (message.chat.id.toString().includes("-100")) {
+        return
+    }
+    if (message.text === "/ping") {
+       const startTime = Date.now();
+       await sendMessage(message.chat.id, message.message_id, "Pinging...");
+       const endTime = Date.now();
+       const ping = endTime - startTime;
+    
+    const ping_text = `🤖 Bot Name: ${BOT_NAME}\n✅ Bot Status: Running\n📶 Ping: ${ping} ms`
+
+      return sendMessage(message.chat.id, message.message_id, ping_text)
+    }
+
+    if (message.text === "/info") {
+      const user = message.from;
+      const restrictions = user.is_bot
+    ? null
+    : await fetch(this.apiUrl('getChatMember', {
+            chat_id: message.chat.id,
+            user_id: user.id
+          })).then(response => response.json()).then(data => data.result.is_member == true )
+      const isScam = user.is_bot
+    ? null
+    : await fetch(this.apiUrl('getChatMember', {
+            chat_id: message.chat.id,
+            user_id: user.id
+          })).then(response => response.json()).then(data => data.result.status == "restricted" && data.result.is_member == true )
+
+         const premium = user.is_premium === true ? "True" : "False"
+         
+         const info_text = `🔍 Your Info on \n━━━━━━━━━━━━━━\n👤 First Name: ${user.first_name || "N/A"} ${user.last_name || ""}\n🆔 ID: ${user.id}\n📛 Username: @${user.username || "N/A"}\n🔗 Profile Link: t.me/${user.username || user.id}\n🔒 TG Restrictions: ${restrictions == true ? "True" : "False" }\n🚨 TG Scamtag: ${isScam == true ? "True" : "False" }\n🌟 TG Premium: ${premium}`
+      return sendMessage(message.chat.id, message.message_id, info_text)
+    }
+
+
+  if (message.text === "/about") {
+  
+     const about_text = `╔════❰ about ❱═❍\n║╭━━━━━━━━━━━━━━━➣\n║┣⪼🤖ᴍʏ ɴᴀᴍᴇ  : ${BOT_NAME}\n║┣⪼👦ᴅᴇᴠᴇʟᴏᴘᴇʀ: ${DEVELOPER}\n║┣⪼❣️ᴜᴘᴅᴀᴛᴇ   : ${UPDATED}\n║┣⪼🗣️ʟᴀɴɢᴜᴀɢᴇ : JS 💻\n║┣⪼🧠ʜᴏsᴛᴇᴅ   : ᴄʟᴏᴜᴅғʟᴀʀᴇ⚡\n║┣⪼📚ᴜᴘᴅᴀᴛᴇᴅ  : ${UPDATED}\n║┣⪼🗒️ᴠᴇʀsɪᴏɴ  : v${VERSION}\n║╰━━━━━━━━━━━━━━━➣\n╚══════════════════❍`
+
+        const buttons = [[{text: "Channel", url: BOT_CHANNEL_LINK}]]
+      return sendMessage(message.chat.id, message.message_id, about_text, buttons)
+    }
+
+
 
   if (message.text && message.text.startsWith("/start ")) {
     const file = message.text.split("/start ")[1]
@@ -339,15 +386,15 @@ async function onMessage(event, message) {
   if (fSave.error_code) {return sendMessage(message.chat.id, message.message_id, fSave.description)}
 
   const final_hash = (btoa(fSave.chat.id*-SIA_NUMBER + "/" + fSave.message_id*SIA_NUMBER)).replace(/=/g, "")
-  const final_link = `${url.origin}/?file=${final_hash}`
-  const final_stre = `${url.origin}/?file=${final_hash}&mode=inline`
-  const final_tele = `https://t.me/${bot.username}/?start=${final_hash}`
+  const final_link = ${url.origin}/?file=${final_hash}
+  const final_stre = ${url.origin}/?file=${final_hash}&mode=inline
+  const final_tele = https://t.me/${bot.username}/?start=${final_hash}
 
   const buttons = [
     [{ text: "Telegram Link", url: final_tele }, { text: "Inline Link", switch_inline_query_current_chat: final_hash }],
     [{ text: "Stream Link", url: final_stre }, { text: "Download Link", url: final_link }]
   ];
 
-  let final_text = `*🗂 File Name:* \`${fName}\`\n*⚙️ File Hash:* \`${final_hash}\``
+  let final_text = *🗂 File Name:* \${fName}\\n*⚙️ File Hash:* \${final_hash}\``
   return sendMessage(message.chat.id, message.message_id, final_text, buttons)
 }
