@@ -30,11 +30,11 @@ addEventListener('fetch', event => {
     event.respondWith(handleRequest(event))
 });
 
-async function handleRequest(event) {
+async function handleRequest(event) { 
     const url = new URL(event.request.url);
     const file = url.searchParams.get('file');
     const mode = url.searchParams.get('mode') || "attachment";
-
+     
     if (url.pathname === BOT_WEBHOOK) {return handleWebhook(event)}
     if (url.pathname === '/registerWebhook') {return registerWebhook(event, url, BOT_WEBHOOK, BOT_SECRET)}
     if (url.pathname === '/unregisterWebhook') {return unregisterWebhook(event)}
@@ -58,7 +58,7 @@ async function handleRequest(event) {
 
     return new Response(rdata, {
         status: 200, headers: {
-            "Content-Disposition": $mode}; filename=${rname}, // inline;
+            "Content-Disposition": `${mode}; filename=${rname}`,
             "Content-Length": rsize,
             "Content-Type": rtype,
             ...HEADERS_FILE
