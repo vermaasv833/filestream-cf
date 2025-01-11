@@ -198,9 +198,8 @@ async function fetchFile(file_path) {
 function apiUrl (methodName, params = null) {
     let query = ''
     if (params) {query = '?' + new URLSearchParams(params).toString()}
-    return https://api.telegram.org/bot${BOT_TOKEN}/${methodName}${query}
+    return `https://api.telegram.org/bot${BOT_TOKEN}/${methodName}${query}`;
 }
-
 // ---------- Update Listener ---------- //
 
 async function onUpdate(event, update) {
